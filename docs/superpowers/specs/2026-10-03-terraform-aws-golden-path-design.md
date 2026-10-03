@@ -77,7 +77,6 @@ terraform-aws-golden-path/
 - KMS CMK（年次ローテーション有効）
 - CloudTrail（KMS 暗号化・S3 保存）
 - GuardDuty / Security Hub / AWS Config 有効化
-- IAM: ECS タスクロール・実行ロール、Lambda 実行ロール（least privilege、インラインポリシー最小構成）
 
 ### 5.3 storage
 
@@ -90,6 +89,7 @@ terraform-aws-golden-path/
 - ECS Fargate: awsvpc モード、プライベートサブネット配置、非特権コンテナ（`readOnlyRootFilesystem`、`cap_drop = ["ALL"]`）
 - ALB: HTTPS のみ（ACM ARN は変数受け取り）、ヘルスチェック
 - Lambda 1本: S3 イベント駆動（アップロードされたオブジェクトのメタデータ処理サンプル）、環境変数は暗号化
+- IAM: ECS タスクロール・実行ロール、Lambda 実行ロール（least privilege、`data "aws_iam_policy_document"` でリソース明示限定。ワークロードと密結合のため compute モジュールに配置）
 
 ### 5.5 observability
 
@@ -130,7 +130,7 @@ terraform-aws-golden-path/
 - RDS / Aurora、Route53 / ACM 証明書の発行（ACM ARN は変数で受け取るのみ）
 - マルチ環境ディレクトリ（dev/staging の追加は `environments/` 配下の追加で拡張可能な構造のみ用意）
 - Terraform Cloud /Atlantis
-- ステートバックエンド（S3 + DynamoDB）の Terraform コード化 — 鶏と卵問題のため README に bootstrap 手順（aws CLI または bootstrap ディレクトリ例）として文書化
+- ステートバックエンド（S3 + native lockfile）の Terraform コード化 — 鶏と卵問題のため README に bootstrap 手順（aws CLI）として文書化。ロックは DynamoDB テーブルではなく Terraform 1.11+ の S3 native lockfile（`use_lockfile = true`）を使用
 - アプリケーションコード（コンテナイメージはサンプルの nginx 等を想定）
 
 ## 9. ブランチ・運用
