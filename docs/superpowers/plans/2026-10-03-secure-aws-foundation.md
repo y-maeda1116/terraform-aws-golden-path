@@ -19,7 +19,7 @@
 - タグ: `environments/prod/providers.tf` の `default_tags` で `Project` / `Environment` / `ManagedBy` / `Repository` を強制注入
 - KMS 暗号化は変数で無効化できない（強制 ON）
 - コミットは Conventional Commits（feat / fix / refactor / test / docs / chore / ci）
-- ローカル検証コマンド: `terraform fmt -check -recursive`、`terraform init -backend=false && terraform validate`、`tflint --recursive`、`trivy config --scanners misconfig --severity HIGH,CRITICAL --exit-code 1 .`
+- ローカル検証コマンド: `terraform fmt -check -recursive`、`terraform init -backend=false && terraform validate`、`tflint --recursive`、`trivy config --severity HIGH,CRITICAL --exit-code 1 .`
 - 各モジュールのテストは `terraform test`（`mock_provider "aws"` 使用、AWS クレデンシャル不要）
 - `.github/workflows/` 配下の YAML で `@v<N>` タグ参照を書いたままコミットしない
 
@@ -830,7 +830,7 @@ terraform fmt -recursive && git diff --exit-code -- . || git checkout -- .
 terraform fmt -check -recursive
 cd modules/security && terraform validate
 cd ../.. && tflint --recursive
-trivy config --scanners misconfig --severity HIGH,CRITICAL --exit-code 1 modules/security
+trivy config --severity HIGH,CRITICAL --exit-code 1 modules/security
 ```
 
 Expected: すべて PASS。Trivy が KMS key policy のワイルドカード `resources = ["*"]` を LOW/MEDIUM で指摘する場合は無視（severity フィルタで HIGH/CRITICAL のみ fail）。HIGH/CRITICAL が出た場合は修正する
@@ -1315,7 +1315,7 @@ cd /Users/y-maeda/project/terraform-aws-golden-path
 terraform fmt -check -recursive
 cd modules/network && terraform validate
 cd ../.. && tflint --recursive
-trivy config --scanners misconfig --severity HIGH,CRITICAL --exit-code 1 modules/network
+trivy config --severity HIGH,CRITICAL --exit-code 1 modules/network
 ```
 
 Expected: すべて PASS
@@ -1658,7 +1658,7 @@ cd /Users/y-maeda/project/terraform-aws-golden-path
 terraform fmt -check -recursive
 cd modules/storage && terraform validate
 cd ../.. && tflint --recursive
-trivy config --scanners misconfig --severity HIGH,CRITICAL --exit-code 1 modules/storage
+trivy config --severity HIGH,CRITICAL --exit-code 1 modules/storage
 ```
 
 Expected: すべて PASS
@@ -1961,7 +1961,7 @@ cd /Users/y-maeda/project/terraform-aws-golden-path
 terraform fmt -check -recursive
 cd modules/observability && terraform validate
 cd ../.. && tflint --recursive
-trivy config --scanners misconfig --severity HIGH,CRITICAL --exit-code 1 modules/observability
+trivy config --severity HIGH,CRITICAL --exit-code 1 modules/observability
 ```
 
 Expected: すべて PASS
@@ -2693,7 +2693,7 @@ cd /Users/y-maeda/project/terraform-aws-golden-path
 terraform fmt -check -recursive
 cd modules/compute && terraform validate
 cd ../.. && tflint --recursive
-trivy config --scanners misconfig --severity HIGH,CRITICAL --exit-code 1 modules/compute
+trivy config --severity HIGH,CRITICAL --exit-code 1 modules/compute
 python3 -m py_compile modules/compute/lambda/s3_processor.py
 ```
 
@@ -2816,7 +2816,7 @@ terraform fmt -check -recursive
 cd environments/prod && terraform init -backend=false && terraform validate
 cd ../.. && tflint --recursive
 for m in modules/*/; do (cd "$m" && terraform init -backend=false >/dev/null && terraform test) || exit 1; done
-trivy config --scanners misconfig --severity HIGH,CRITICAL --exit-code 1 .
+trivy config --severity HIGH,CRITICAL --exit-code 1 .
 ```
 
 Expected: すべて PASS
@@ -3358,7 +3358,7 @@ Expected: ディレクトリはすべて存在（NG 出力なし）。`workflow_
 terraform fmt -check -recursive && \
 (cd environments/prod && terraform init -backend=false >/dev/null && terraform validate) && \
 tflint --recursive && \
-trivy config --scanners misconfig --severity HIGH,CRITICAL --exit-code 1 . && \
+trivy config --severity HIGH,CRITICAL --exit-code 1 . && \
 echo "ALL CHECKS PASSED"
 ```
 
