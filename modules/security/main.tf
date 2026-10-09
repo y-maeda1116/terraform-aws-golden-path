@@ -38,6 +38,19 @@ data "aws_iam_policy_document" "kms" {
     }
   }
 
+  # AWS Config の監査バケットへの配信 (バケットはこの CMK の SSE-KMS で暗号化される)
+  statement {
+    sid       = "AllowConfig"
+    effect    = "Allow"
+    actions   = ["kms:GenerateDataKey*", "kms:DescribeKey"]
+    resources = ["*"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["config.amazonaws.com"]
+    }
+  }
+
   # CloudWatch Logs への暗号化 (VPC Flow Logs / ECS / Lambda ログ)
   statement {
     sid    = "AllowCloudWatchLogs"
