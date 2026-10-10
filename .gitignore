@@ -33,3 +33,6 @@ override.tf.json
 .DS_Store
 .idea/
 .vscode/
+
+# Lambda build artifacts
+*.py.zip
