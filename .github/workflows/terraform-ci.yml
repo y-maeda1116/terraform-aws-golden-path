@@ -8,6 +8,11 @@ on:
 permissions:
   contents: read
 
+# PR 更新のたびに同一チェックが積み重なるのを防ぐ（最新 run のみ実行）
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   fmt:
     name: terraform fmt

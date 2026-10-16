@@ -39,12 +39,14 @@ resource "aws_cloudwatch_metric_alarm" "lambda_errors" {
 }
 
 # ECS サービス CPU（Container Insights）— 高負荷の持続で発火
+# Average = サービス内タスクの平均 CPU 利用率 (%)。Sum は CPU ユニット合計で
+# タスク数依存のためスケールアウトで誤発火する
 resource "aws_cloudwatch_metric_alarm" "ecs_cpu" {
   alarm_name          = "${var.name_prefix}-ecs-cpu-high"
-  alarm_description   = "ECS サービスの CPU 使用率が高い"
+  alarm_description   = "ECS サービスの平均 CPU 使用率が閾値を超えて持続している"
   namespace           = "ECS/ContainerInsights"
   metric_name         = "CpuUtilized"
-  statistic           = "Sum"
+  statistic           = "Average"
   period              = 300
   evaluation_periods  = 3
   threshold           = var.ecs_cpu_threshold
