@@ -93,3 +93,9 @@ jobs:
           severity: HIGH,CRITICAL
           exit-code: "1"
           ignore-unfixed: true
+
+  secret-scan:
+    name: secret scan
+    uses: ./.github/workflows/reusable-secret-scan.yml
+    with:
+      scan-tool: "trivy"
