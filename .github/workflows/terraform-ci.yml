@@ -1,0 +1,95 @@
+name: Terraform CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  fmt:
+    name: terraform fmt
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # actions/checkout
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # hashicorp/setup-terraform
+        with:
+          terraform_version: "1.16.5" # ローカル検証済みバージョンに一致
+
+      - name: Check formatting
+        run: terraform fmt -check -recursive
+
+  tflint:
+    name: tflint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # actions/checkout
+
+      - name: Setup tflint
+        uses: terraform-linters/setup-tflint@ae78205cfffec9e8d93fd2b3115c7e9d3166d4b6 # terraform-linters/setup-tflint
+        with:
+          tflint_version: v0.64.0 # ローカル検証済みバージョンに一致
+
+      - name: Init plugins
+        run: tflint --init
+
+      - name: Run tflint
+        run: tflint --recursive --format compact
+
+  validate-and-test:
+    name: validate & test (${{ matrix.dir }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        dir:
+          - environments/prod
+          - modules/security
+          - modules/network
+          - modules/storage
+          - modules/compute
+          - modules/observability
+    defaults:
+      run:
+        working-directory: ${{ matrix.dir }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # actions/checkout
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # hashicorp/setup-terraform
+        with:
+          terraform_version: "1.16.5"
+
+      - name: terraform init
+        run: terraform init -backend=false
+
+      - name: terraform validate
+        run: terraform validate
+
+      - name: terraform test
+        if: matrix.dir != 'environments/prod'
+        run: terraform test
+
+  trivy:
+    name: trivy misconfig scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # actions/checkout
+
+      - name: Run Trivy
+        uses: aquasecurity/trivy-action@f9424c10c36e288d5fa79bd3dfd1aeb2d6eae808 # aquasecurity/trivy-action
+        with:
+          scan-type: config
+          scan-ref: .
+          scanners: misconfig
+          severity: HIGH,CRITICAL
+          exit-code: "1"
+          ignore-unfixed: true
