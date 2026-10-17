@@ -31,6 +31,7 @@ module "compute" {
   private_subnet_ids  = module.network.private_subnet_ids
   kms_key_arn         = module.security.kms_key_arn
   app_bucket_arn      = module.storage.app_bucket_arn
+  app_bucket_name     = var.app_bucket_name
   acm_certificate_arn = var.acm_certificate_arn
 }
 

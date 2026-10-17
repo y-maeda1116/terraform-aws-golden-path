@@ -48,6 +48,16 @@ variable "app_bucket_arn" {
   type        = string
 }
 
+variable "app_bucket_name" {
+  description = "Lambda のイベント送信元 S3 バケット名（module.storage.app_bucket_name）。バケット通知設定と Lambda 環境変数で ARN からは導出できないため明示的に受け取る"
+  type        = string
+
+  validation {
+    condition     = can(regex("^[a-z0-9][a-z0-9.-]{2,62}$", var.app_bucket_name))
+    error_message = "app_bucket_name は S3 バケット命名規則（小文字英数字・ハイフン・ドット、3〜63 文字）に従ってください。"
+  }
+}
+
 variable "acm_certificate_arn" {
   description = "ALB HTTPS リスナーの ACM 証明書 ARN"
   type        = string

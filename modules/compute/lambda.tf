@@ -23,7 +23,7 @@ resource "aws_lambda_function" "s3_processor" {
 
   environment {
     variables = {
-      LOG_BUCKET_NAME = basename(var.app_bucket_arn)
+      LOG_BUCKET_NAME = var.app_bucket_name
     }
   }
 
@@ -38,9 +38,9 @@ resource "aws_lambda_permission" "s3_invoke" {
   source_arn    = var.app_bucket_arn
 }
 
-# S3 バケット通知（バケットは storage モジュールの管轄のため、ARN 文字列で参照）
+# S3 バケット通知（バケットは storage モジュールの管轄のため、名前は変数で受け取る）
 resource "aws_s3_bucket_notification" "app" {
-  bucket = basename(var.app_bucket_arn)
+  bucket = var.app_bucket_name
 
   lambda_function {
     lambda_function_arn = aws_lambda_function.s3_processor.arn

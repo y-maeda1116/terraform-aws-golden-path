@@ -9,7 +9,7 @@ ECS Fargate サービス（ALB HTTPS / プライベートサブネット / 非�
 | name_prefix | string | yes | リソース名プレフィックス |
 | vpc_id / public_subnet_ids / private_subnet_ids | — | yes | module.network の outputs |
 | kms_key_arn | string | yes | ログ暗号化用 CMK ARN |
-| app_bucket_arn | string | yes | module.storage の output |
+| app_bucket_arn / app_bucket_name | string | yes | module.storage の output（通知設定・Lambda 環境変数用に名前も受ける） |
 | acm_certificate_arn | string | yes | ALB HTTPS 用証明書 |
 | container_image | string | no (nginx:1.27-alpine) | コンテナイメージ |
 | container_port / desired_count / task_cpu / task_memory | number | no | タスク定義 |

@@ -28,12 +28,18 @@ run "valid_configuration" {
     private_subnet_ids  = ["subnet-ccc", "subnet-ddd"]
     kms_key_arn         = "arn:aws:kms:ap-northeast-1:123456789012:key/abcd1234-5678-90ef-ghij-klmnopqrstuv"
     app_bucket_arn      = "arn:aws:s3:::test-prod-app"
+    app_bucket_name     = "test-prod-app"
     acm_certificate_arn = "arn:aws:acm:ap-northeast-1:123456789012:certificate/abcd1234-abcd-1234-abcd-1234567890ab"
   }
 
   assert {
     condition     = aws_ecs_service.app.desired_count == 2
     error_message = "ECS desired_count はデフォルト 2（冗長性）"
+  }
+
+  assert {
+    condition     = aws_s3_bucket_notification.app.bucket == "test-prod-app"
+    error_message = "バケット通知はバケット名（ARN から basename 導出ではない）を使用する"
   }
 
   assert {
@@ -67,6 +73,7 @@ run "invalid_acm_arn_rejected" {
     private_subnet_ids  = ["subnet-ccc", "subnet-ddd"]
     kms_key_arn         = "arn:aws:kms:ap-northeast-1:123456789012:key/abcd1234-5678-90ef-ghij-klmnopqrstuv"
     app_bucket_arn      = "arn:aws:s3:::test-prod-app"
+    app_bucket_name     = "test-prod-app"
     acm_certificate_arn = "arn:aws:notacm:xxx"
   }
 
