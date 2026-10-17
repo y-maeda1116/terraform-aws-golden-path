@@ -1,0 +1,9 @@
+# Trivy misconfig (terraform) scan settings
+severity:
+  - HIGH
+  - CRITICAL
+exit-code: 1
+misconfiguration:
+  terraform:
+    include:
+      - ./**
