@@ -106,7 +106,20 @@ resource "aws_iam_role" "tf_plan" {
 # ロールには plan に必要な読み取り系 + state バケットへの読み書きを付与
 ```
 
-作成したロール ARN をリポジトリ変数 `AWS_PLAN_ROLE_ARN`、リージョンを `AWS_REGION` に設定する。未設定の場合、plan/apply ワークフローはスキップされ CI は緑のまま（fork でも壊れない）。
+作成したロール ARN をリポジトリ変数 `AWS_PLAN_ROLE_ARN`、リージョンを `AWS_REGION` に設定する。未設定の場合、plan ジョブはスキップされ CI は緑のまま（fork でも壊れない）。
+
+apply 用には別ロールを作成する（least privilege — plan ロールに書き込み権限を持たせない）:
+
+```hcl
+resource "aws_iam_role" "tf_apply" {
+  name = "goldenpath-tf-apply"
+  # trust policy は tf_plan と同一（OIDC sub 条件も同じ）
+  assume_role_policy = "..."
+}
+# apply ロールには必要な全リソース権限 + state バケットへの読み書きを付与
+```
+
+このロール ARN をリポジトリ変数 `AWS_APPLY_ROLE_ARN` に設定する。未設定の場合、apply ジョブは手動実行してもスキップされる。
 
 ### 3. apply
 
