@@ -21,7 +21,12 @@ run "valid_configuration" {
   }
 
   assert {
-    condition     = aws_s3_bucket_public_access_block.app.block_public_acls == true && aws_s3_bucket_public_access_block.app.restrict_public_buckets == true
+    condition = alltrue([
+      aws_s3_bucket_public_access_block.app.block_public_acls,
+      aws_s3_bucket_public_access_block.app.block_public_policy,
+      aws_s3_bucket_public_access_block.app.ignore_public_acls,
+      aws_s3_bucket_public_access_block.app.restrict_public_buckets,
+    ])
     error_message = "public access block の 4 項目はすべて有効が必須"
   }
 
