@@ -42,8 +42,26 @@ jobs:
       - name: terraform init
         run: terraform init -input=false
 
+      # tee が plan の失敗を吸わないよう pipefail を有効化
       - name: terraform plan
-        run: terraform plan -input=false -no-color -out=tfplan
+        run: |
+          set -o pipefail
+          terraform plan -input=false -no-color -out=tfplan | tee plan.txt
+
+      # plan 失敗時も出力を summary に残す（init 失敗時は plan.txt が無いのでスキップ）
+      - name: Post plan to job summary
+        if: always()
+        run: |
+          [ -f plan.txt ] || exit 0
+          {
+            echo "## Terraform plan"
+            echo '<details><summary>plan output</summary>'
+            echo ''
+            echo '```'
+            cat plan.txt
+            echo '```'
+            echo '</details>'
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload plan artifact
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # actions/upload-artifact
