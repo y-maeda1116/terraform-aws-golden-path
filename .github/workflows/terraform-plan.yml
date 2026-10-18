@@ -55,7 +55,8 @@ jobs:
   apply:
     name: terraform apply (manual)
     # 手動実行のみ。environment の approval gate で保護する（README 参照）
-    if: github.event_name == 'workflow_dispatch'
+    # plan とは別の apply 専用ロールを使う（least privilege）。未設定ならスキップ
+    if: github.event_name == 'workflow_dispatch' && vars.AWS_APPLY_ROLE_ARN != ''
     needs: plan
     runs-on: ubuntu-latest
     environment: production
@@ -81,7 +82,7 @@ jobs:
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # aws-actions/configure-aws-credentials
         with:
-          role-to-assume: ${{ vars.AWS_PLAN_ROLE_ARN }}
+          role-to-assume: ${{ vars.AWS_APPLY_ROLE_ARN }}
           aws-region: ${{ vars.AWS_REGION }}
 
       - name: terraform init
