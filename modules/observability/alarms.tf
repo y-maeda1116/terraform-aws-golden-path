@@ -18,7 +18,27 @@ resource "aws_cloudwatch_metric_alarm" "alb_5xx" {
   alarm_actions = [aws_sns_topic.alerts.arn]
 }
 
-# Lambda エラー — 1 件でも発生したら発火
+# ECS タスク停止 — 実行タスク数が desired count を下回る状態が持続したら発火
+# treat_missing_data = breaching: メトリクス途絶も全タスク停止の可能性として扱う
+resource "aws_cloudwatch_metric_alarm" "ecs_tasks_stopped" {
+  alarm_name          = "${var.name_prefix}-ecs-tasks-stopped"
+  alarm_description   = "ECS サービスの実行タスク数が desired count を下回っている"
+  namespace           = "ECS/ContainerInsights"
+  metric_name         = "ServiceRunningTaskCount"
+  statistic           = "Average"
+  period              = 60
+  evaluation_periods  = 3
+  threshold           = var.ecs_desired_count
+  comparison_operator = "LessThanThreshold"
+  treat_missing_data  = "breaching"
+
+  dimensions = {
+    ClusterName = var.ecs_cluster_name
+    ServiceName = var.ecs_service_name
+  }
+
+  alarm_actions = [aws_sns_topic.alerts.arn]
+}
 resource "aws_cloudwatch_metric_alarm" "lambda_errors" {
   alarm_name          = "${var.name_prefix}-lambda-errors"
   alarm_description   = "Lambda 関数でエラーが発生している"

@@ -22,3 +22,8 @@ output "lambda_function_name" {
   description = "Lambda 関数名"
   value       = aws_lambda_function.s3_processor.function_name
 }
+
+output "ecs_desired_count" {
+  description = "ECS サービスの desired count（observability のタスク停止アラーム閾値用）"
+  value       = var.desired_count
+}

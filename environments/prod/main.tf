@@ -44,5 +44,6 @@ module "observability" {
   alb_arn_suffix       = module.compute.alb_arn_suffix
   ecs_cluster_name     = module.compute.ecs_cluster_name
   ecs_service_name     = module.compute.ecs_service_name
+  ecs_desired_count    = module.compute.ecs_desired_count
   lambda_function_name = module.compute.lambda_function_name
 }
