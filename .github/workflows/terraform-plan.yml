@@ -72,6 +72,12 @@ jobs:
           terraform_version: "1.16.5"
           terraform_wrapper: false
 
+      - name: Download plan artifact
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # actions/download-artifact (v5)
+        with:
+          name: tfplan
+          path: environments/prod
+
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # aws-actions/configure-aws-credentials
         with:
@@ -81,5 +87,6 @@ jobs:
       - name: terraform init
         run: terraform init -input=false
 
-      - name: terraform apply
-        run: terraform apply -input=false -no-color -auto-approve
+      # plan job が保存した tfplan をそのまま適用する（plan → 承認 → apply の一致を保証）
+      - name: terraform apply (saved plan)
+        run: terraform apply -input=false -no-color tfplan
