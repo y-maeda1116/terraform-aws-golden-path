@@ -20,6 +20,8 @@ variable "name_prefix" {
   }
 }
 
+# S3 バケット命名 validation は security / compute モジュール側にも同一ルールが
+# ある（Terraform は validation を共有できないため意図的な重複。修正時は両方更新）
 variable "audit_bucket_name" {
   description = "CloudTrail / AWS Config ログ保存用 S3 バケット名（グローバル一意である必要がある）"
   type        = string
@@ -30,6 +32,7 @@ variable "audit_bucket_name" {
   }
 }
 
+# audit_bucket_name と同一の S3 命名 validation（上記コメント参照）
 variable "app_bucket_name" {
   description = "アプリケーションデータ用 S3 バケット名（グローバル一意である必要がある）"
   type        = string
