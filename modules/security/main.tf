@@ -36,6 +36,13 @@ data "aws_iam_policy_document" "kms" {
       type        = "Service"
       identifiers = ["cloudtrail.amazonaws.com"]
     }
+
+    # confused-deputy 対策: 自アカウントのサービスからの利用に限定
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceAccount"
+      values   = [data.aws_caller_identity.current.account_id]
+    }
   }
 
   # AWS Config の監査バケットへの配信 (バケットはこの CMK の SSE-KMS で暗号化される)
@@ -48,6 +55,12 @@ data "aws_iam_policy_document" "kms" {
     principals {
       type        = "Service"
       identifiers = ["config.amazonaws.com"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceAccount"
+      values   = [data.aws_caller_identity.current.account_id]
     }
   }
 
@@ -68,6 +81,12 @@ data "aws_iam_policy_document" "kms" {
       type        = "Service"
       identifiers = ["logs.${data.aws_region.current.region}.amazonaws.com"]
     }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceAccount"
+      values   = [data.aws_caller_identity.current.account_id]
+    }
   }
 
   # SNS トピックの暗号化
@@ -81,6 +100,12 @@ data "aws_iam_policy_document" "kms" {
       type        = "Service"
       identifiers = ["sns.amazonaws.com"]
     }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceAccount"
+      values   = [data.aws_caller_identity.current.account_id]
+    }
   }
 
   # Lambda 環境変数の暗号化
@@ -93,6 +118,12 @@ data "aws_iam_policy_document" "kms" {
     principals {
       type        = "Service"
       identifiers = ["lambda.amazonaws.com"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceAccount"
+      values   = [data.aws_caller_identity.current.account_id]
     }
   }
 }

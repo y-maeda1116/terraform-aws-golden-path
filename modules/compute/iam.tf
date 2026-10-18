@@ -71,6 +71,13 @@ data "aws_iam_policy_document" "lambda_trust" {
       type        = "Service"
       identifiers = ["lambda.amazonaws.com"]
     }
+
+    # confused-deputy 対策: 自アカウント以外からのロール利用を拒否
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceAccount"
+      values   = [data.aws_caller_identity.current.account_id]
+    }
   }
 }
 
