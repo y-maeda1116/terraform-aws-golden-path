@@ -43,6 +43,16 @@ variable "ecs_service_name" {
   type        = string
 }
 
+variable "ecs_desired_count" {
+  description = "ECS サービスの desired count（module.compute.ecs_desired_count）。実行タスク数がこれを下回ると停止アラームが発火"
+  type        = number
+
+  validation {
+    condition     = var.ecs_desired_count >= 1 && var.ecs_desired_count <= 10
+    error_message = "ecs_desired_count は 1〜10 の範囲で指定してください（compute モジュールの desired_count と同じ制約）。"
+  }
+}
+
 variable "lambda_function_name" {
   description = "アラーム対象 Lambda 関数名（module.compute.lambda_function_name）"
   type        = string

@@ -10,12 +10,18 @@ run "valid_configuration" {
     alb_arn_suffix       = "app/test-prod-alb/1234567890"
     ecs_cluster_name     = "test-prod"
     ecs_service_name     = "test-prod-app"
+    ecs_desired_count    = 2
     lambda_function_name = "test-prod-s3-processor"
   }
 
   assert {
     condition     = aws_sns_topic_subscription.alerts.protocol == "email"
     error_message = "アラート通知は email プロトコル"
+  }
+
+  assert {
+    condition     = aws_cloudwatch_metric_alarm.ecs_tasks_stopped.threshold == 2 && aws_cloudwatch_metric_alarm.ecs_tasks_stopped.comparison_operator == "LessThanThreshold"
+    error_message = "タスク停止アラームは実行数 < desired count で発火"
   }
 
   assert {
@@ -39,6 +45,7 @@ run "invalid_email_rejected" {
     alb_arn_suffix       = "app/test-prod-alb/1234567890"
     ecs_cluster_name     = "test-prod"
     ecs_service_name     = "test-prod-app"
+    ecs_desired_count    = 2
     lambda_function_name = "test-prod-s3-processor"
   }
 
