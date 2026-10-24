@@ -1,4 +1,6 @@
 # ALB: public サブネット配置。HTTPS 443 のみ受信。
+# IPv4-only は現行の設計判断。IPv6 対応する場合は ALB を Dualstack にした上で
+# ingress に ipv6_cidr_blocks = ["::/0"] を追加する。
 resource "aws_security_group" "alb" {
   name        = "${var.name_prefix}-alb"
   description = "ALB: HTTPS ingress only"
