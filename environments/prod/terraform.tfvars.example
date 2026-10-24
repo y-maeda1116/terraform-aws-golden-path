@@ -1,4 +1,5 @@
-# 値は利用環境に合わせて変更すること。
+# cp terraform.tfvars.example terraform.tfvars してから実環境の値を設定すること。
+# terraform.tfvars は .gitignore 済み — 実値（バケット名・証明書 ARN・通知先等）をコミットしない。
 # バケット名は S3 のグローバル名前空間で一意である必要がある。
 name_prefix         = "goldenpath-prod"
 audit_bucket_name   = "goldenpath-prod-audit" # 一意になるよう変更（例: <org>-goldenpath-prod-audit）

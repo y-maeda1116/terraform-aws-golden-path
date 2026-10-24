@@ -72,6 +72,12 @@ CI ゲート: `terraform fmt -check` / `terraform validate` / `terraform test`�
 
 ## AWS で使う（bootstrap）
 
+デプロイ設定は example から生成して実値を設定する（`terraform.tfvars` は gitignore 済みでコミットされない）:
+
+```bash
+cp environments/prod/terraform.tfvars.example environments/prod/terraform.tfvars
+```
+
 ### 1. ステートバックエンド
 
 ```bash
@@ -135,7 +141,7 @@ resource "aws_iam_role" "tf_apply" {
 | ワークフロー | トリガー | 内容 |
 |---|---|---|
 | Terraform CI | PR / push main | fmt, validate, terraform test, tflint, Trivy, secret scan（AWS 認証不要） |
-| Terraform Plan | push main（*.tf / *.tfvars / lambda 変更時）+ 手動 | OIDC 認証で `terraform plan`、apply は `production` environment の承認付き手動実行 |
+| Terraform Plan | push main（*.tf / *.tfvars* / lambda 変更時）+ 手動 | OIDC 認証で `terraform plan`、apply は `production` environment の承認付き手動実行 |
 
 すべての `uses:` はコミット SHA ピン留め。Dependabot が週次で更新 PR を作成する。
 
