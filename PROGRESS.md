@@ -1,6 +1,6 @@
 # 進捗ステータス
 
-最終更新: 2026-10-21
+最終更新: 2026-11-08
 
 ## ゴール
 
@@ -23,17 +23,15 @@ secure AWS foundation テンプレート (Terraform + GitHub Actions) の完成�
 | #7 | terraform plan 出力を job summary へ投稿 | #19 |
 | #8 | storage の PAB assert を 4 フラグ全カバー | #20 |
 | #9 | S3 命名 validation 重複への相互参照コメント | #21 |
+| #10 | providers lock で linux_amd64 ハッシュを事前取得 | #23 |
+| #12 | terraform.tfvars.example パターンへ移行 | #24 |
+| #13 | ALB SG の IPv4-only 設計判断を docs に追記 | #25 |
+| #14 | security-base の ignore-unfixed を upstream 同期で取り込み | #27 |
 
 ## 進行中
 
-- **#10**: `terraform providers lock -platform=linux_amd64` で各 lock ファイルに
-  linux hash を事前取得（CI runner での init 時の非決定的な lock 書き換えを防止）。
-  6 lock ファイルの更新はローカルで完了、コミット待ち
+(なし — follow-up issues #3〜#14 はすべて完了・クローズ済み)
 
 ## 残タスク
 
-| Issue | 内容 | 備考 |
-|-------|------|------|
-| #12 | `.tfvars.example` パターンの検討 | 影響調査前提 (plan workflow が terraform.tfvars をデフォルト読み込みするため) |
-| #13 | ALB SG の IPv4-only 設計判断コメント追記 | docs |
-| #14 | security-base への ignore-unfixed 改善上流 PR 検討 | **外向き操作のためユーザー同意が必要** |
+(なし)
